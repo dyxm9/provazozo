@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prova – Redes de Computadores</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #faf8f4;
+  --paper: #ffffff;
+  --ink: #1a1a1a;
+  --muted: #888;
+  --border: #e0ddd8;
+  --red: #d63031;
+  --green: #00875a;
+  --blue: #0057b7;
+  --yellow: #f59f00;
+  --highlight: #fff3bf;
+  --correct-bg: #d3f9d8;
+  --wrong-bg: #ffe3e3;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.exam-header {
+  background: var(--ink);
+  color: #fff;
+  padding: 32px 24px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.exam-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 8px,
+    rgba(255,255,255,.03) 8px,
+    rgba(255,255,255,.03) 16px
+  );
+}
+
+.exam-header .school-label {
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #aaa;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.exam-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(24px, 5vw, 40px);
+  letter-spacing: -0.5px;
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.exam-header .subtitle {
+  font-size: 13px;
+  color: #bbb;
+  position: relative;
+}
+
+/* ── TIMER ── */
+.timer-bar {
+  background: #fff;
+  border-bottom: 2px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.timer {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--ink);
+  min-width: 80px;
+}
+
+.timer.warning { color: var(--red); animation: pulse 1s infinite; }
+
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+
+.progress-wrap {
+  flex: 1;
+  min-width: 120px;
+}
+
+.progress-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--ink);
+  border-radius: 3px;
+  transition: width .4s ease;
+}
+
+.btn-submit {
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+  white-space: nowrap;
+}
+
+.btn-submit:hover { background: #333; }
+
+/* ── MAIN ── */
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 16px 60px;
+}
+
+/* ── SECTION HEADERS ── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 36px 0 16px;
+}
+
+.section-label .num {
+  background: var(--ink);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+.section-label h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+}
+
+/* ── QUESTION ── */
+.question {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  transition: box-shadow .2s;
+}
+
+.question:hover { box-shadow: 0 4px 20px rgba(0,0,0,.06); }
+
+.q-number {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.q-text {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+/* ── MULTIPLE CHOICE ── */
+.options { display: flex; flex-direction: column; gap: 8px; }
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s;
+  background: #fff;
+  position: relative;
+}
+
+.option:hover:not(.locked) {
+  border-color: var(--ink);
+  background: #f5f5f5;
+}
+
+.option.selected {
+  border-color: var(--ink);
+  background: #f0f0f0;
+}
+
+.option.correct {
+  border-color: var(--green);
+  background: var(--correct-bg);
+}
+
+.option.wrong {
+  border-color: var(--red);
+  background: var(--wrong-bg);
+}
+
+.option-letter {
+  width: 22px; height: 22px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.option.selected .option-letter { color: var(--ink); border-color: var(--ink); }
+.option.correct .option-letter { color: var(--green); border-color: var(--green); }
+.option.wrong .option-letter { color: var(--red); border-color: var(--red); }
+
+.option-text { font-size: 14px; flex: 1; }
+
+.feedback {
+  display: none;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.feedback.show { display: block; }
+.feedback.correct-msg { background: #d3f9d8; color: #1a6b33; }
+.feedback.wrong-msg { background: #ffe3e3; color: #a00; }
+
+/* ── TRUE/FALSE ── */
+.tf-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.tf-btn {
+  flex: 1;
+  padding: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  text-align: center;
+}
+
+.tf-btn:hover:not(.locked) {
+  border-color: var(--ink);
+  background: #f5f5f5;
+}
+
+.tf-btn.selected { border-color: var(--ink); background: #f0f0f0; }
+.tf-btn.correct { border-color: var(--green); background: var(--correct-bg); color: var(--green); }
+.tf-btn.wrong { border-color: var(--red); background: var(--wrong-bg); color: var(--red); }
+
+/* ── FILL IN BLANK ── */
+.fill-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  background: #fff;
+  outline: none;
+  transition: border-color .15s;
+  margin-top: 4px;
+}
+
+.fill-input:focus { border-color: var(--ink); }
+.fill-input.correct { border-color: var(--green); background: var(--correct-bg); }
+.fill-input.wrong { border-color: var(--red); background: var(--wrong-bg); }
+
+.check-fill {
+  margin-top: 8px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.check-fill:hover { border-color: var(--ink); background: #f5f5f5; }
+
+/* ── MATCH ── */
+.match-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.match-col h4 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.match-item {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fff;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all .15s;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.match-item.clickable:hover { border-color: var(--blue); background: #eff6ff; }
+.match-item.selected-left { border-color: var(--blue); background: #eff6ff; font-weight: 600; }
+.match-item.matched { border-color: var(--green); background: var(--correct-bg); }
+.match-item.wrong-match { border-color: var(--red); background: var(--wrong-bg); }
+
+.match-key {
+  font-family: 'DM Serif Display', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue);
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+/* ── RESULT SCREEN ── */
+#result-screen {
+  display: none;
+  text-align: center;
+  padding: 48px 24px;
+}
+
+#result-screen.show { display: block; }
+
+.result-score {
+  font-family: 'DM Serif Display', serif;
+  font-size: 72px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.result-label {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.result-emoji { font-size: 48px; margin-bottom: 16px; }
+
+.result-breakdown {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.rb-item {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  min-width: 100px;
+}
+
+.rb-num { font-family: 'DM Serif Display', serif; font-size: 28px; }
+.rb-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+.btn-retry {
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-retry:hover { background: #333; }
+
+.gabarito {
+  margin-top: 32px;
+  text-align: left;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.gabarito h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.gab-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.gab-item:last-child { border-bottom: none; }
+.gab-icon { font-size: 15px; flex-shrink: 0; margin-top: 2px; }
+.gab-text strong { display: block; color: var(--ink); }
+.gab-text span { color: var(--muted); }
+
+#exam-form { display: block; }
+</style>
+</head>
+<body>
+
+<div class="exam-header">
+  <div class="school-label">📡 Simulado</div>
+  <h1>Redes de Computadores</h1>
+  <p class="subtitle">Introdução a Redes de Computadores e Protocolos • 1º Trimestre</p>
+</div>
+
+<div class="timer-bar">
+  <div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:2px">TEMPO</div>
+    <div class="timer" id="timer">30:00</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">0 de 20 respondidas</div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <button class="btn-submit" onclick="submitExam()">Finalizar Prova</button>
+</div>
+
+<main>
+  <div id="exam-form">
+
+    <!-- SEÇÃO 1: MÚLTIPLA ESCOLHA -->
+    <div class="section-label">
+      <span class="num">PARTE I</span>
+      <h2>Múltipla Escolha</h2>
+    </div>
+
+    <!-- Q1 -->
+    <div class="question" id="q1">
+      <div class="q-number">Questão 1</div>
+      <div class="q-text">Qual dispositivo de rede é responsável por conectar diferentes redes e gerenciar o tráfego de dados garantindo que as informações cheguem ao destino correto?</div>
+      <div class="options">
+        <div class="option" onclick="selectOption('q1',this,'A')"><span class="option-letter">A</span><span class="option-text">Switch</span></div>
+        <div class="option" onclick="selectOption('q1',this,'B')"><span class="option-letter">B</span><span class="option-text">Modem</span></div>
+        <div class="option" onclick="selectOption('q1',this,'C')"><span class="option-letter">C</span><span class="option-text">Roteador</span></div>
+        <div class="option" onclick="selectOption('q1',this,'D')"><span class="option-letter">D</span><span class="option-text">Hub</span></div>
+      </div>
+      <div class="feedback" id="fb-q1"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question" id="q2">
+      <div class="q-number">Questão 2</div>
+      <div class="q-text">Qual é a principal diferença entre um Hub e um Switch?</div>
+      <div class="options">
+        <div class="option" onclick="selectOption('q2',this,'A')"><span class="option-letter">A</span><span class="option-text">O Hub é mais caro e mais rápido que o Switch</span></div>
+        <div class="option" onclick="selectOption('q2',this,'B')"><span class="option-letter">B</span><span class="option-text">O Switch envia dados apenas ao dispositivo de destino, enquanto o Hub envia para todos os aparelhos conectados</span></div>
+        <div class="option" onclick="selectOption('q2',this,'C')"><span class="option-letter">C</span><span class="option-text">O Hub conecta redes diferentes; o Switch conecta dispositivos dentro de uma mesma rede</span></div>
+        <div class="option" onclick="selectOption('q2',this,'D')"><span class="option-letter">D</span><span class="option-text">Não há diferença funcional entre eles</span></div>
+      </div>
+      <div class="feedback" id="fb-q2"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question" id="q3">
+      <div class="q-number">Questão 3</div>
+      <div class="q-text">Em uma Rede de Computação Centralizada, o que são os "terminais"?</div>
+      <div class="options">
+        <div class="option" onclick="selectOption('q3',this,'A')"><span class="option-letter">A</span><span class="option-text">Máquinas com grande capacidade de processamento</span></div>
+        <div class="option" onclick="selectOption('q3',this,'B')"><span class="option-letter">B</span><span class="option-text">Computadores com processador próprio que funcionam como clientes</span></div>
+        <div class="option" onclick="selectOption('q3',this,'C')"><span class="option-letter">C</span><span class="option-text">Dispositivos "burros" (sem processador) com apenas entrada e saída, que acessam o computador central</span></div>
+        <div class="option" onclick="selectOption('q3',this,'D')"><span class="option-letter">D</span><span class="option-text">Servidores de e-mail e web</span></div>
+      </div>
+      <div class="feedback" id="fb-q3"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question" id="q4">
+      <div class="q-number">Questão 4</div>
+      <div class="q-text">A Internet é o melhor exemplo de qual tipo de rede quanto à abrangência?</div>
+      <div class="options">
+        <div class="option" onclick="selectOption('q4',this,'A')"><span class="option-letter">A</span><span class="option-text">LAN (Local Area Network)</span></div>
+        <div class="option" onclick="selectOption('q4',this,'B')"><span class="option-letter">B</span><span class="option-text">MAN (Metropolitan Area Network)</span></div>
+        <div class="option" onclick="selectOption('q4',this,'C')"><span class="option-letter">C</span><span class="option-text">CAN (Campus Area Network)</span></div>
+        <div class="option" onclick="selectOption('q4',this,'D')"><span class="option-letter">D</span><span class="option-text">WAN (Wide Area Network)</span></div>
+      </div>
+      <div class="feedback" id="fb-q4"></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question" id="q5">
+      <div class="q-number">Questão 5</div>
+      <div class="q-text">Na Rede de Computação Distribuída do tipo Cliente-Servidor, qual é a função do servidor?</div>
+      <div class="options">
+        <div class="option" onclick="selectOption('q5',this,'A')"><span class="option-letter">A</span><span class="option-text">Solicitar serviços como e-mail, web e backup</span></div>
+        <div class="option" onclick="selectOption('q5',this,'B')"><span class="option-letter">B</span><span class="option-text">Executar um ou mais serviços para os clientes da rede</span></div>
+        <div class="option" onclick="selectOption('q5',this,'C')"><span class="option-letter">C</span><span class="option-text">Funcionar como terminal sem processador</span></div>
+        <div class="option" onclick="selectOption('q5',this,'D')"><span class="option-letter">D</span><span class="option-text">Administrar individualmente cada usuário da rede</span></div>
+      </div>
+      <div class="feedback" id="fb-q5"></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question" id="q6">
+      <div class="q-number">Questão 6</div>
+      <div class="q-text">Qual tipo de comutação usa sempre o mesmo caminho (circuito) para a transmissão de dados, garantindo que os dados sejam recebidos na ordem de envio?</div>
+      <div class="options">
+        <div class="option" onclick="selectOption('q6',this,'A')"><span class="option-letter">A</span><span class="option-text">Comutação de Pacotes</span></div>
+        <div class="option" onclick="selectOption('q6',this,'B')"><span class="option-letter">B</span><span class="option-text">Comutação de Circuito</span></div>
+        <div class="option" onclick="selectOption('q6',this,'C')"><span class="option-letter">C</span><span class="option-text">Comutação de Quadros</span></div>
+        <div class="option" onclick="selectOption('q6',this,'D')"><span class="option-letter">D</span><span class="option-text">Comutação Virtual</span></div>
+      </div>
+      <div class="feedback" id="fb-q6"></div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="question" id="q7">
+      <div class="q-number">Questão 7</div>
+      <div class="q-text">O que é uma VLAN (Virtual Local Area Network)?</div>
+      <div class="options">
+        <div class="option" onclick="selectOption('q7',this,'A')"><span class="option-letter">A</span><span class="option-text">Uma rede sem fio que abrange um campus universitário</span></div>
+        <div class="option" onclick="selectOption('q7',this,'B')"><span class="option-letter">B</span><span class="option-text">Uma rede que permite que máquinas distantes geograficamente façam parte de uma mesma LAN</span></div>
+        <div class="option" onclick="selectOption('q7',this,'C')"><span class="option-letter">C</span><span class="option-text">Uma rede que abrange uma cidade inteira</span></div>
+        <div class="option" onclick="selectOption('q7',this,'D')"><span class="option-letter">D</span><span class="option-text">Uma rede ponto-a-ponto doméstica</span></div>
+      </div>
+      <div class="feedback" id="fb-q7"></div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="question" id="q8">
+      <div class="q-number">Questão 8</div>
+      <div class="q-text">Na Rede Orientada a Conexão, qual é a segunda etapa do processo de entrega de dados?</div>
+      <div class="options">
+        <div class="option" onclick="selectOption('q8',this,'A')"><span class="option-letter">A</span><span class="option-text">O transmissor envia os pacotes de dados</span></div>
+        <div class="option" onclick="selectOption('q8',this,'B')"><span class="option-letter">B</span><span class="option-text">O receptor envia OK para o transmissor e a conexão é estabelecida</span></div>
+        <div class="option" onclick="selectOption('q8',this,'C')"><span class="option-letter">C</span><span class="option-text">O transmissor termina a conexão</span></div>
+        <div class="option" onclick="selectOption('q8',this,'D')"><span class="option-letter">D</span><span class="option-text">O receptor envia confirmação de cada pacote recebido</span></div>
+      </div>
+      <div class="feedback" id="fb-q8"></div>
+    </div>
+
+    <!-- SEÇÃO 2: VERDADEIRO OU FALSO -->
+    <div class="section-label">
+      <span class="num">PARTE II</span>
+      <h2>Verdadeiro ou Falso</h2>
+    </div>
+
+    <!-- Q9 -->
+    <div class="question" id="q9">
+      <div class="q-number">Questão 9</div>
+      <div class="q-text">O Modem é o hardware responsável por converter sinais digitais em analógicos, permitindo que a rede local se conecte à internet.</div>
+      <div class="tf-options">
+        <button class="tf-btn" onclick="selectTF('q9',this,true)">✅ Verdadeiro</button>
+        <button class="tf-btn" onclick="selectTF('q9',this,false)">❌ Falso</button>
+      </div>
+      <div class="feedback" id="fb-q9"></div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="question" id="q10">
+      <div class="q-number">Questão 10</div>
+      <div class="q-text">Na Rede Ponto-a-Ponto, existe um serviço de diretório centralizado que gerencia permissões de acesso dos usuários.</div>
+      <div class="tf-options">
+        <button class="tf-btn" onclick="selectTF('q10',this,true)">✅ Verdadeiro</button>
+        <button class="tf-btn" onclick="selectTF('q10',this,false)">❌ Falso</button>
+      </div>
+      <div class="feedback" id="fb-q10"></div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="question" id="q11">
+      <div class="q-number">Questão 11</div>
+      <div class="q-text">Na Comutação de Pacotes, os pacotes podem chegar fora de ordem no destino.</div>
+      <div class="tf-options">
+        <button class="tf-btn" onclick="selectTF('q11',this,true)">✅ Verdadeiro</button>
+        <button class="tf-btn" onclick="selectTF('q11',this,false)">❌ Falso</button>
+      </div>
+      <div class="feedback" id="fb-q11"></div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="question" id="q12">
+      <div class="q-number">Questão 12</div>
+      <div class="q-text">A Rede Determinística não consegue prever o intervalo de tempo em que os pacotes serão entregues.</div>
+      <div class="tf-options">
+        <button class="tf-btn" onclick="selectTF('q12',this,true)">✅ Verdadeiro</button>
+        <button class="tf-btn" onclick="selectTF('q12',this,false)">❌ Falso</button>
+      </div>
+      <div class="feedback" id="fb-q12"></div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="question" id="q13">
+      <div class="q-number">Questão 13</div>
+      <div class="q-text">A Rede de Computação Centralizada ainda é muito usada em bancos e companhias aéreas.</div>
+      <div class="tf-options">
+        <button class="tf-btn" onclick="selectTF('q13',this,true)">✅ Verdadeiro</button>
+        <button class="tf-btn" onclick="selectTF('q13',this,false)">❌ Falso</button>
+      </div>
+      <div class="feedback" id="fb-q13"></div>
+    </div>
+
+    <!-- SEÇÃO 3: COMPLETAR -->
+    <div class="section-label">
+      <span class="num">PARTE III</span>
+      <h2>Complete a Frase</h2>
+    </div>
+
+    <!-- Q14 -->
+    <div class="question" id="q14">
+      <div class="q-number">Questão 14</div>
+      <div class="q-text">A rede <strong>Probabilística</strong> também é chamada de rede __________ ou aleatória.</div>
+      <input class="fill-input" id="fill-q14" placeholder="Digite sua resposta..." />
+      <button class="check-fill" onclick="checkFill('q14', ['estatistica','estatística'])">Verificar</button>
+      <div class="feedback" id="fb-q14"></div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="question" id="q15">
+      <div class="q-number">Questão 15</div>
+      <div class="q-text">O <strong>Access Point</strong> permite a conexão de dispositivos __________ a uma rede com fio.</div>
+      <input class="fill-input" id="fill-q15" placeholder="Digite sua resposta..." />
+      <button class="check-fill" onclick="checkFill('q15', ['sem fio','wireless','wi-fi','wifi'])">Verificar</button>
+      <div class="feedback" id="fb-q15"></div>
+    </div>
+
+    <!-- Q16 -->
+    <div class="question" id="q16">
+      <div class="q-number">Questão 16</div>
+      <div class="q-text">Na Rede Não Orientada a Conexão, o transmissor __________ sabe se os dados chegaram ao destino.</div>
+      <input class="fill-input" id="fill-q16" placeholder="Digite sua resposta..." />
+      <button class="check-fill" onclick="checkFill('q16', ['nao','não','não sabe','nao sabe'])">Verificar</button>
+      <div class="feedback" id="fb-q16"></div>
+    </div>
+
+    <!-- SEÇÃO 4: ASSOCIAÇÃO -->
+    <div class="section-label">
+      <span class="num">PARTE IV</span>
+      <h2>Associação</h2>
+    </div>
+
+    <!-- Q17 -->
+    <div class="question" id="q17">
+      <div class="q-number">Questão 17 — Clique em um termo da esquerda e depois na definição correspondente à direita</div>
+      <div class="q-text">Associe cada tipo de rede à sua abrangência geográfica:</div>
+      <div class="match-container">
+        <div class="match-col">
+          <h4>Tipo de Rede</h4>
+          <div class="match-item clickable" onclick="selectLeft('q17', this, 'LAN')"><span class="match-key">LAN</span></div>
+          <div class="match-item clickable" onclick="selectLeft('q17', this, 'MAN')"><span class="match-key">MAN</span></div>
+          <div class="match-item clickable" onclick="selectLeft('q17', this, 'WAN')"><span class="match-key">WAN</span></div>
+          <div class="match-item clickable" onclick="selectLeft('q17', this, 'CAN')"><span class="match-key">CAN</span></div>
+        </div>
+        <div class="match-col">
+          <h4>Abrangência</h4>
+          <div class="match-item" onclick="selectRight('q17', this, 'CAN')">Dois ou mais prédios próximos</div>
+          <div class="match-item" onclick="selectRight('q17', this, 'WAN')">Mais que uma cidade; rede de longa distância</div>
+          <div class="match-item" onclick="selectRight('q17', this, 'MAN')">Até uma cidade inteira</div>
+          <div class="match-item" onclick="selectRight('q17', this, 'LAN')">Sala a um prédio; rede local</div>
+        </div>
+      </div>
+      <div class="feedback" id="fb-q17"></div>
+    </div>
+
+    <!-- SEÇÃO 5: DISCURSIVA -->
+    <div class="section-label">
+      <span class="num">PARTE V</span>
+      <h2>Questões Discursivas</h2>
+    </div>
+
+    <!-- Q18 -->
+    <div class="question" id="q18">
+      <div class="q-number">Questão 18</div>
+      <div class="q-text">Explique a diferença entre a <strong>Rede Orientada a Conexão</strong> e a <strong>Rede Não Orientada a Conexão</strong>. Cite uma característica de cada uma.</div>
+      <textarea class="fill-input" id="fill-q18" rows="4" placeholder="Escreva sua resposta aqui..."></textarea>
+      <button class="check-fill" onclick="showDiscursive('q18')">Ver Gabarito</button>
+      <div class="feedback" id="fb-q18"></div>
+    </div>
+
+    <!-- Q19 -->
+    <div class="question" id="q19">
+      <div class="q-number">Questão 19</div>
+      <div class="q-text">O que é uma rede de computadores e cite <strong>dois exemplos do cotidiano</strong> onde ela está presente.</div>
+      <textarea class="fill-input" id="fill-q19" rows="4" placeholder="Escreva sua resposta aqui..."></textarea>
+      <button class="check-fill" onclick="showDiscursive('q19')">Ver Gabarito</button>
+      <div class="feedback" id="fb-q19"></div>
+    </div>
+
+    <!-- Q20 -->
+    <div class="question" id="q20">
+      <div class="q-number">Questão 20</div>
+      <div class="q-text">Explique o que é a Rede de Computação Distribuída do tipo <strong>Front-End/Back-End</strong> e dê um exemplo prático.</div>
+      <textarea class="fill-input" id="fill-q20" rows="4" placeholder="Escreva sua resposta aqui..."></textarea>
+      <button class="check-fill" onclick="showDiscursive('q20')">Ver Gabarito</button>
+      <div class="feedback" id="fb-q20"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:36px">
+      <button class="btn-submit" style="padding:14px 40px;font-size:15px" onclick="submitExam()">🎯 Finalizar e Ver Resultado</button>
+    </div>
+
+  </div><!-- end exam-form -->
+
+  <!-- RESULTADO -->
+  <div id="result-screen">
+    <div class="result-emoji" id="result-emoji"></div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-label" id="result-label"></div>
+    <div class="result-breakdown">
+      <div class="rb-item"><div class="rb-num" id="r-correct" style="color:var(--green)">0</div><div class="rb-label">Certas</div></div>
+      <div class="rb-item"><div class="rb-num" id="r-wrong" style="color:var(--red)">0</div><div class="rb-label">Erradas</div></div>
+      <div class="rb-item"><div class="rb-num" id="r-skip" style="color:var(--yellow)">0</div><div class="rb-label">Puladas</div></div>
+      <div class="rb-item"><div class="rb-num" id="r-total">17</div><div class="rb-label">Objetivas</div></div>
+    </div>
+    <button class="btn-retry" onclick="retryExam()">🔄 Tentar Novamente</button>
+
+    <div class="gabarito" id="gabarito-box" style="margin-top:32px">
+      <h3>📋 Gabarito Completo</h3>
+      <div id="gabarito-list"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── STATE ──
+const answers = {};
+const correct = {
+  q1: 'C', q2: 'B', q3: 'C', q4: 'D', q5: 'B',
+  q6: 'B', q7: 'B', q8: 'B',
+  q9: true, q10: false, q11: true, q12: false, q13: true
+};
+
+const fillAnswers = {
+  q14: ['estatistica','estatística'],
+  q15: ['sem fio','wireless','wi-fi','wifi'],
+  q16: ['nao','não','não sabe','nao sabe']
+};
+
+const discursiveGabarito = {
+  q18: '✅ Gabarito: A Rede Orientada a Conexão GARANTE a entrega dos dados — o transmissor e receptor trocam confirmações a cada pacote. A Rede Não Orientada a Conexão NÃO garante a entrega — o transmissor envia os pacotes sem saber se chegaram ao destino.',
+  q19: '✅ Gabarito: Redes de computadores são sistemas que conectam dispositivos para compartilhar dados, internet e recursos. Exemplos: (1) No banco — o caixa eletrônico ligado ao computador central. (2) No supermercado — a caixa registradora que debita o produto do estoque.',
+  q20: '✅ Gabarito: É um tipo de rede distribuída onde um servidor front-end se comunica com um servidor back-end. Exemplo: um servidor web (front-end) busca os dados no servidor de banco de dados (back-end) e monta a página para o cliente.'
+};
+
+let totalObjective = 17; // 8 MC + 5 TF + 3 Fill + 1 Match
+let answered = 0;
+
+// ── TIMER ──
+let timeLeft = 30 * 60;
+const timerEl = document.getElementById('timer');
+const timerInterval = setInterval(() => {
+  timeLeft--;
+  const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+  const s = String(timeLeft % 60).padStart(2, '0');
+  timerEl.textContent = `${m}:${s}`;
+  if (timeLeft <= 300) timerEl.classList.add('warning');
+  if (timeLeft <= 0) { clearInterval(timerInterval); submitExam(); }
+}, 1000);
+
+// ── PROGRESS ──
+function updateProgress() {
+  const pct = (answered / totalObjective * 100).toFixed(0);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${answered} de ${totalObjective} respondidas`;
+}
+
+// ── MULTIPLE CHOICE ──
+function selectOption(qid, el, letter) {
+  const q = document.getElementById(qid);
+  if (q.classList.contains('locked')) return;
+  q.classList.add('locked');
+
+  q.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+
+  const isCorrect = letter === correct[qid];
+  const fb = document.getElementById('fb-' + qid);
+
+  q.querySelectorAll('.option').forEach(o => {
+    const l = o.querySelector('.option-letter').textContent;
+    if (l === correct[qid]) o.classList.add('correct');
+  });
+
+  if (!isCorrect) el.classList.add('wrong');
+  else el.classList.add('correct');
+
+  fb.className = 'feedback show ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+  fb.textContent = isCorrect ? '✅ Correto!' : `❌ Errado! A resposta correta era a alternativa ${correct[qid]}.`;
+
+  answers[qid] = isCorrect;
+  answered++;
+  updateProgress();
+}
+
+// ── TRUE/FALSE ──
+function selectTF(qid, btn, value) {
+  const q = document.getElementById(qid);
+  if (q.classList.contains('locked')) return;
+  q.classList.add('locked');
+
+  q.querySelectorAll('.tf-btn').forEach(b => { b.classList.remove('selected'); b.classList.add('locked'); });
+  btn.classList.add('selected');
+
+  const isCorrect = value === correct[qid];
+  const fb = document.getElementById('fb-' + qid);
+
+  btn.classList.remove('selected');
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  // show correct
+  q.querySelectorAll('.tf-btn').forEach(b => {
+    const bVal = b.textContent.includes('Verdadeiro');
+    if (bVal === correct[qid]) b.classList.add('correct');
+  });
+
+  fb.className = 'feedback show ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+  fb.textContent = isCorrect ? '✅ Correto!' : `❌ Errado! A resposta correta é ${correct[qid] ? 'Verdadeiro' : 'Falso'}.`;
+
+  answers[qid] = isCorrect;
+  answered++;
+  updateProgress();
+}
+
+// ── FILL IN BLANK ──
+function checkFill(qid, acceptedList) {
+  const input = document.getElementById('fill-' + qid);
+  if (input.disabled) return;
+  const val = input.value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const normalized = acceptedList.map(a => a.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+  const isCorrect = normalized.some(a => val.includes(a) || a.includes(val) && val.length > 2);
+
+  input.disabled = true;
+  input.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  const fb = document.getElementById('fb-' + qid);
+  fb.className = 'feedback show ' + (isCorrect ? 'correct-msg' : 'wrong-msg');
+  fb.textContent = isCorrect ? '✅ Correto!' : `❌ Errado! Resposta esperada: ${acceptedList[0]}.`;
+
+  answers[qid] = isCorrect;
+  answered++;
+  updateProgress();
+}
+
+// ── MATCH ──
+let matchState = { q17: { selected: null, pairs: {} } };
+
+function selectLeft(qid, el, key) {
+  const state = matchState[qid];
+  if (el.classList.contains('matched')) return;
+  document.querySelectorAll(`#${qid} .match-item.selected-left`).forEach(e => e.classList.remove('selected-left'));
+  el.classList.add('selected-left');
+  state.selected = { el, key };
+}
+
+function selectRight(qid, el, key) {
+  const state = matchState[qid];
+  if (!state.selected || el.classList.contains('matched')) return;
+
+  const leftEl = state.selected.el;
+  const leftKey = state.selected.key;
+  const isCorrect = leftKey === key;
+
+  leftEl.classList.remove('selected-left');
+  leftEl.classList.add(isCorrect ? 'matched' : 'wrong-match');
+  el.classList.add(isCorrect ? 'matched' : 'wrong-match');
+
+  if (!isCorrect) {
+    setTimeout(() => {
+      leftEl.classList.remove('wrong-match');
+      el.classList.remove('wrong-match');
+    }, 1200);
+  } else {
+    state.pairs[leftKey] = key;
+    const allDone = Object.keys(state.pairs).length === 4;
+    if (allDone) {
+      answers[qid] = true;
+      answered++;
+      updateProgress();
+      document.getElementById('fb-q17').className = 'feedback show correct-msg';
+      document.getElementById('fb-q17').textContent = '✅ Todas as associações corretas!';
+    }
+  }
+
+  state.selected = null;
+}
+
+// ── DISCURSIVE ──
+function showDiscursive(qid) {
+  const fb = document.getElementById('fb-' + qid);
+  fb.className = 'feedback show correct-msg';
+  fb.textContent = discursiveGabarito[qid];
+  document.getElementById('fill-' + qid).disabled = true;
+}
+
+// ── SUBMIT ──
+function submitExam() {
+  clearInterval(timerInterval);
+
+  let correctCount = 0, wrongCount = 0, skipCount = 0;
+  const gabItems = [];
+
+  const questions = ['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12','q13','q14','q15','q16','q17'];
+  const labels = [
+    'Q1 – Dispositivo que gerencia tráfego entre redes',
+    'Q2 – Diferença Hub vs Switch',
+    'Q3 – Terminais na rede centralizada',
+    'Q4 – Internet = exemplo de WAN',
+    'Q5 – Função do servidor',
+    'Q6 – Comutação de Circuito',
+    'Q7 – O que é VLAN',
+    'Q8 – 2ª etapa da rede orientada a conexão',
+    'Q9 – Modem converte sinais (V/F)',
+    'Q10 – P2P tem serviço de diretório (V/F)',
+    'Q11 – Pacotes chegam fora de ordem (V/F)',
+    'Q12 – Determinística não prevê tempo (V/F)',
+    'Q13 – Rede centralizada usada em bancos (V/F)',
+    'Q14 – Probabilística = estatística ou aleatória',
+    'Q15 – Access Point conecta dispositivos sem fio',
+    'Q16 – Não orientada: transmissor não sabe',
+    'Q17 – Associação de redes'
+  ];
+
+  questions.forEach((q, i) => {
+    if (answers[q] === true) {
+      correctCount++;
+      gabItems.push({ icon: '✅', text: labels[i], note: 'Correto' });
+    } else if (answers[q] === false) {
+      wrongCount++;
+      gabItems.push({ icon: '❌', text: labels[i], note: 'Errado' });
+    } else {
+      skipCount++;
+      gabItems.push({ icon: '⚪', text: labels[i], note: 'Não respondido' });
+    }
+  });
+
+  const pct = Math.round(correctCount / questions.length * 100);
+  const emoji = pct >= 90 ? '🏆' : pct >= 70 ? '😄' : pct >= 50 ? '😐' : '📚';
+  const label = pct >= 90 ? 'Excelente! Você está muito bem preparado!' : pct >= 70 ? 'Bom trabalho! Revise os erros.' : pct >= 50 ? 'Vai precisar estudar mais um pouco.' : 'Atenção! Volte ao guia de estudos.';
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-score').textContent = pct + '%';
+  document.getElementById('result-label').textContent = label;
+  document.getElementById('r-correct').textContent = correctCount;
+  document.getElementById('r-wrong').textContent = wrongCount;
+  document.getElementById('r-skip').textContent = skipCount;
+  document.getElementById('r-total').textContent = questions.length;
+
+  const gabList = document.getElementById('gabarito-list');
+  gabList.innerHTML = gabItems.map(g => `
+    <div class="gab-item">
+      <span class="gab-icon">${g.icon}</span>
+      <div class="gab-text"><strong>${g.text}</strong><span>${g.note}</span></div>
+    </div>
+  `).join('');
+
+  document.getElementById('exam-form').style.display = 'none';
+  document.getElementById('result-screen').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── RETRY ──
+function retryExam() {
+  location.reload();
+}
+</script>
+</body>
+</html>
