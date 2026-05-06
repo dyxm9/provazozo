@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia de Estudos – Redes de Computadores</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #17171f;
+    --card: #1e1e2a;
+    --border: #2e2e42;
+    --accent1: #ff6b6b;
+    --accent2: #ffd166;
+    --accent3: #06d6a0;
+    --accent4: #118ab2;
+    --accent5: #c77dff;
+    --text: #e8e8f0;
+    --muted: #8888a8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    padding: 24px 16px 60px;
+  }
+
+  header {
+    text-align: center;
+    padding: 40px 16px 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
+
+  header .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 10px;
+  }
+
+  header h1 {
+    font-size: clamp(22px, 5vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 36px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .toc h2 {
+    font-size: 13px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 14px;
+  }
+
+  .toc ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .toc a {
+    display: inline-block;
+    padding: 5px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 12px;
+    transition: all .2s;
+  }
+
+  .toc a:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  section {
+    max-width: 720px;
+    margin: 0 auto 44px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .section-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .section-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .date-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+
+  .card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .card p, .card li { font-size: 13.5px; color: #c8c8e0; }
+
+  .card ul { padding-left: 18px; }
+  .card ul li { margin-bottom: 4px; }
+
+  .highlight {
+    display: inline;
+    background: rgba(255,209,102,.13);
+    color: var(--accent2);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-weight: 600;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 4px;
+    margin-bottom: 6px;
+  }
+
+  .tag-red { background: rgba(255,107,107,.15); color: var(--accent1); }
+  .tag-yellow { background: rgba(255,209,102,.15); color: var(--accent2); }
+  .tag-green { background: rgba(6,214,160,.15); color: var(--accent3); }
+  .tag-blue { background: rgba(17,138,178,.2); color: #4cc9f0; }
+  .tag-purple { background: rgba(199,125,255,.15); color: var(--accent5); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:560px){ .grid2 { grid-template-columns: 1fr; } }
+
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  @media(max-width:500px){ .compare-row { grid-template-columns: 1fr; } }
+
+  .vs-card {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+  }
+
+  .vs-card h4 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .vs-card ul { padding-left: 16px; }
+  .vs-card li { font-size: 12.5px; color: #c8c8e0; margin-bottom: 3px; }
+
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+    color: #c8c8e0;
+  }
+
+  .steps li::before {
+    content: counter(step);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(255,209,102,.2);
+    color: var(--accent2);
+    font-weight: 700;
+    font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .tip {
+    background: rgba(6,214,160,.08);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #c8e8df;
+    margin-top: 10px;
+  }
+
+  .warn {
+    background: rgba(255,107,107,.08);
+    border-left: 3px solid var(--accent1);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #f0c8c8;
+    margin-top: 10px;
+  }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+
+  .flashcard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+
+  .flashcard .fc-q {
+    font-size: 12px;
+    color: var(--accent2);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .flashcard .fc-a {
+    font-size: 12.5px;
+    color: #c8c8e0;
+  }
+
+  .table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  th {
+    background: rgba(255,209,102,.1);
+    color: var(--accent2);
+    padding: 9px 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: #c8c8e0;
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">📡 Guia de Estudos para Prova</div>
+  <h1>Introdução às Redes de Computadores</h1>
+  <p>Baseado no caderno • 1º Trimestre</p>
+</header>
+
+<!-- ÍNDICE -->
+<div class="toc" style="max-width:720px;margin:0 auto 36px;">
+  <h2>📋 Índice</h2>
+  <ul>
+    <li><a href="#intro">Por que redes?</a></li>
+    <li><a href="#hardware">Hardware de Rede</a></li>
+    <li><a href="#tipos">Tipos de Rede</a></li>
+    <li><a href="#abrangencia">Abrangência</a></li>
+    <li><a href="#modelo">Modelo de Computação</a></li>
+    <li><a href="#comutacao">Comutação</a></li>
+    <li><a href="#garantia">Garantia de Entrega</a></li>
+    <li><a href="#previsibilidade">Previsibilidade</a></li>
+    <li><a href="#flashcards">Flashcards Rápidos</a></li>
+  </ul>
+</div>
+
+<!-- 1. INTRODUÇÃO -->
+<section id="intro">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,107,107,.15)">🌐</div>
+    <h2 style="color:var(--accent1)">Por que Redes de Computadores?</h2>
+    <span class="date-tag">11/02</span>
+  </div>
+
+  <div class="card">
+    <p>Quando o assunto é informática, é impossível não pensar em redes de computadores. Elas estão presentes em todo lugar:</p>
+    <ul style="margin-top:10px">
+      <li><strong>No banco:</strong> caixa eletrônico ligado ao computador central</li>
+      <li><strong>No supermercado:</strong> caixa registradora que debita do estoque o produto</li>
+      <li><strong>No pagamento:</strong> TEF que se comunica com a administradora do cartão</li>
+      <li><strong>Em casa:</strong> acessando a internet</li>
+    </ul>
+  </div>
+
+  <div class="grid2">
+    <div class="card" style="border-color:rgba(255,209,102,.3)">
+      <h3 style="color:var(--accent2)">🔄 Troca de Informações</h3>
+      <p>Ex: João recebe um catálogo de produtos do fornecedor X. Alfredo envia uma nota de pedido para o fornecedor X.</p>
+    </div>
+    <div class="card" style="border-color:rgba(6,214,160,.3)">
+      <h3 style="color:var(--accent3)">🖨️ Compartilhamento de Recursos</h3>
+      <p>Ex: Computador A compartilha a internet. Computador B compartilha a impressora.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 2. HARDWARE -->
+<section id="hardware">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,209,102,.15)">🔧</div>
+    <h2 style="color:var(--accent2)">Hardware de Rede</h2>
+    <span class="date-tag">24/02</span>
+  </div>
+
+  <div class="card">
+    <h3>O que é hardware de rede?</h3>
+    <p>Refere-se a todos os dispositivos físicos utilizados para estabelecer, manter e gerenciar redes de computadores. São essenciais para a comunicação entre diferentes sistemas e para a troca de dados em uma rede.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3 style="color:var(--accent5)">🔁 Roteador</h3>
+      <ul>
+        <li>Conecta diferentes redes</li>
+        <li>Gerencia o tráfego de dados</li>
+        <li>Garante que informações cheguem ao destino correto</li>
+        <li>Pode oferecer firewall e NAT (Network Address Translation)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent4)">🔀 Switch</h3>
+      <ul>
+        <li>Fundamental para criar redes locais (LANs)</li>
+        <li>Opera na camada de enlace do modelo OSI</li>
+        <li>Recebe pacotes e encaminha ao dispositivo correto</li>
+        <li>Processa múltiplas transmissões simultaneamente</li>
+        <li>Reduz latência e aumenta largura de banda</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent3)">📡 Modem</h3>
+      <ul>
+        <li>Permite conexão da rede local à internet</li>
+        <li>Converte sinais digitais ↔ analógicos</li>
+        <li>Facilita comunicação entre provedor e dispositivos</li>
+        <li><strong>Responsável por permitir acesso à internet</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent1)">📶 Access Point (Ponto de Acesso)</h3>
+      <ul>
+        <li>Permite conexão de dispositivos sem fio a redes com fio</li>
+        <li>Expande cobertura de rede sem fio</li>
+        <li>Permite mais dispositivos em áreas maiores</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="vs-card" style="border-color:rgba(255,107,107,.4)">
+      <h4 style="color:var(--accent1)">🔴 Hub (repetidor "burro")</h4>
+      <ul>
+        <li>Envia dados para TODOS os aparelhos conectados</li>
+        <li>Gera mais tráfego e colisões</li>
+      </ul>
+    </div>
+    <div class="vs-card" style="border-color:rgba(6,214,160,.4)">
+      <h4 style="color:var(--accent3)">🟢 Switch (inteligente)</h4>
+      <ul>
+        <li>Direciona dados APENAS ao dispositivo de destino</li>
+        <li>Reduz tráfego e colisões</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip">💡 <strong>Dica:</strong> Um computador <strong>precisa</strong> de uma placa de rede para se conectar à internet ou qualquer rede.</div>
+</section>
+
+<hr class="divider">
+
+<!-- 3. TIPOS DE REDE -->
+<section id="tipos">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(17,138,178,.15)">📊</div>
+    <h2 style="color:#4cc9f0">Tipos de Rede</h2>
+    <span class="date-tag">03/03</span>
+  </div>
+
+  <div class="card">
+    <h3>Critérios para classificar uma rede:</h3>
+    <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
+      <span class="tag tag-red">Abrangência</span>
+      <span class="tag tag-yellow">Modelo de Computação</span>
+      <span class="tag tag-green">Tipo de Comutação</span>
+      <span class="tag tag-blue">Garantia de Entrega</span>
+      <span class="tag tag-purple">Previsibilidade</span>
+      <span class="tag tag-red">Topologia</span>
+      <span class="tag tag-yellow">Método de Transmissão</span>
+      <span class="tag tag-green">Arquitetura</span>
+      <span class="tag tag-blue">Protocolo</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 4. ABRANGÊNCIA -->
+<section id="abrangencia">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(199,125,255,.15)">🗺️</div>
+    <h2 style="color:var(--accent5)">Quanto à Abrangência</h2>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <p>Redes classificadas de acordo com o <span class="highlight">tamanho da área geográfica</span> que elas abrangem.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Tipo</th>
+        <th>Nome Completo</th>
+        <th>Abrangência</th>
+        <th>Características</th>
+      </tr>
+      <tr>
+        <td><span class="tag tag-green">LAN</span></td>
+        <td>Local Area Network</td>
+        <td>Sala a um prédio</td>
+        <td>Tipo mais comum; rede local</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-green">WLAN</span></td>
+        <td>Wireless Local Area Network</td>
+        <td>Igual à LAN</td>
+        <td>Sem uso de cabos (wireless)</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-yellow">VLAN</span></td>
+        <td>Virtual Local Area Network</td>
+        <td>Qualquer distância</td>
+        <td>Máquinas distantes que fazem parte de uma LAN virtual</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-yellow">CAN</span></td>
+        <td>Campus Area Network</td>
+        <td>Dois ou mais prédios próximos</td>
+        <td>Universidades, hospitais, grandes empresas</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-red">MAN</span></td>
+        <td>Metropolitan Area Network</td>
+        <td>Até uma cidade inteira</td>
+        <td>Conexão feita por concessionária de telecomunicação</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-red">WAN</span></td>
+        <td>Wide Area Network</td>
+        <td>Mais que uma cidade</td>
+        <td>Rede de longa distância. <strong>A Internet é o melhor exemplo.</strong></td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 5. MODELO DE COMPUTAÇÃO -->
+<section id="modelo">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(6,214,160,.15)">💻</div>
+    <h2 style="color:var(--accent3)">Quanto ao Modelo de Computação</h2>
+    <span class="date-tag">04/03</span>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <p>Redes classificadas segundo a <span class="highlight">maneira como os dados são processados</span>.</p>
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+      <span class="tag tag-red">Centralizada</span>
+      <span class="tag tag-yellow">Distribuída</span>
+      <span class="tag tag-green">Cooperativa</span>
+    </div>
+  </div>
+
+  <!-- Centralizada -->
+  <div class="card" style="border-color:rgba(255,107,107,.35);margin-bottom:12px">
+    <h3 style="color:var(--accent1)">🏛️ Rede de Computação Centralizada</h3>
+    <ul style="margin-top:8px">
+      <li><strong>Computador central:</strong> máquina com grande capacidade de processamento</li>
+      <li><strong>Terminais:</strong> acessam o computador central para realizar o processamento</li>
+      <li>São "burros" (sem processador) — têm apenas dispositivos de E/S (entrada e saída)</li>
+      <li>Ainda muito usada em <strong>bancos e companhias aéreas</strong></li>
+    </ul>
+  </div>
+
+  <!-- Distribuída -->
+  <div class="card" style="border-color:rgba(255,209,102,.35);margin-bottom:12px">
+    <h3 style="color:var(--accent2)">🌐 Rede de Computação Distribuída</h3>
+    <p>Cada máquina da rede tem seu próprio processador. Subtipos:</p>
+    <div style="margin-top:12px;display:grid;gap:10px">
+
+      <div style="background:var(--surface);border-radius:8px;padding:12px;border:1px solid var(--border)">
+        <strong style="color:#4cc9f0">Cliente-Servidor</strong>
+        <ul style="margin-top:6px">
+          <li><strong>Servidor:</strong> executa um ou mais serviços (e-mail, web, backup, arquivos...)</li>
+          <li><strong>Cliente:</strong> solicita um serviço</li>
+          <li>Tem serviço de diretório — usuários se autenticam e verificam permissões</li>
+          <li>Administração da rede é <strong>centralizada</strong></li>
+        </ul>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:12px;border:1px solid var(--border)">
+        <strong style="color:#4cc9f0">Ponto-a-Ponto (P2P)</strong>
+        <ul style="margin-top:6px">
+          <li>Típica de redes domésticas ou de escritório</li>
+          <li>Qualquer computador pode funcionar como servidor a qualquer momento</li>
+          <li>Serviços específicos (ex: e-mail) devem ser fornecidos por servidor fora da rede</li>
+          <li><strong>Sem</strong> serviço de diretório — rede administrada por cada usuário</li>
+        </ul>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:12px;border:1px solid var(--border)">
+        <strong style="color:#4cc9f0">Baseada em Servidor</strong>
+        <ul style="margin-top:6px">
+          <li>Arquitetura similar à centralizada</li>
+          <li>Diferença: o terminal possui processador, funciona como cliente</li>
+          <li>Execução de processamento depende da aplicação</li>
+          <li>Ex: redes com Telnet e SSH</li>
+        </ul>
+      </div>
+
+      <div style="background:var(--surface);border-radius:8px;padding:12px;border:1px solid var(--border)">
+        <strong style="color:#4cc9f0">Front-End / Back-End</strong>
+        <ul style="margin-top:6px">
+          <li>Servidor front-end se comunica com servidor back-end</li>
+          <li>Ex: servidor web (front-end) + servidor de banco de dados (back-end)</li>
+          <li>O BD armazena os dados; o web busca os dados e monta a página para o cliente</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cooperativa -->
+  <div class="card" style="border-color:rgba(6,214,160,.35)">
+    <h3 style="color:var(--accent3)">🤝 Rede de Computação Cooperativa</h3>
+    <p>Vários computadores da rede são usados para realizar uma parte do processamento.</p>
+    <ul style="margin-top:8px">
+      <li><strong>Computação em nuvem:</strong> ocorre em computadores "comuns" conectados à internet</li>
+      <li><strong>Computação em grade:</strong> ocorre em servidores dedicados</li>
+    </ul>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 6. COMUTAÇÃO -->
+<section id="comutacao">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,209,102,.15)">🔀</div>
+    <h2 style="color:var(--accent2)">Quanto ao Tipo de Comutação</h2>
+    <span class="date-tag">17/03</span>
+  </div>
+
+  <div class="card" style="margin-bottom:12px">
+    <p><strong>Comutação</strong> é o processo de interligar dois ou mais pontos entre si.</p>
+  </div>
+
+  <div class="compare-row">
+    <div class="vs-card" style="border-color:rgba(255,107,107,.4)">
+      <h4 style="color:var(--accent1)">🔴 Comutação de Circuito</h4>
+      <ul>
+        <li>Uma conexão é montada como se fosse um fio ligando os computadores</li>
+        <li>Dados trocados livremente nos dois sentidos</li>
+        <li>Sempre usa o <strong>mesmo caminho</strong> (circuito)</li>
+        <li>Dados sempre recebidos na <strong>ordem de envio</strong></li>
+      </ul>
+    </div>
+    <div class="vs-card" style="border-color:rgba(6,214,160,.4)">
+      <h4 style="color:var(--accent3)">🟢 Comutação de Pacotes</h4>
+      <ul>
+        <li>Dados divididos em <strong>pacotes</strong></li>
+        <li>Caminho de cada pacote <strong>não é fixo</strong></li>
+        <li>Roteadores definem o melhor caminho (curto ou menos congestionado)</li>
+        <li>Pacotes podem chegar <strong>fora de ordem</strong> no destino</li>
+        <li>Usada por diversas arquiteturas de rede atuais</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 7. GARANTIA DE ENTREGA -->
+<section id="garantia">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,107,107,.15)">📦</div>
+    <h2 style="color:var(--accent1)">Quanto à Garantia de Entrega de Dados</h2>
+  </div>
+
+  <div class="compare-row">
+    <div class="vs-card" style="border-color:rgba(6,214,160,.4)">
+      <h4 style="color:var(--accent3)">✅ Orientada a Conexão</h4>
+      <p style="font-size:12px;color:#c8c8e0;margin-bottom:8px">Garante a entrega de dados. Etapas:</p>
+      <ol class="steps">
+        <li>Transmissor envia pedido</li>
+        <li>Receptor envia OK e a conexão é estabelecida</li>
+        <li>Transmissor envia os pacotes de dados</li>
+        <li>A cada pacote recebido, receptor envia confirmação ao transmissor</li>
+        <li>Quando termina, transmissor encerra a conexão</li>
+      </ol>
+    </div>
+    <div class="vs-card" style="border-color:rgba(255,107,107,.4)">
+      <h4 style="color:var(--accent1)">❌ Não Orientada a Conexão</h4>
+      <ul>
+        <li>Não garante a entrega de dados</li>
+        <li>O transmissor envia os pacotes</li>
+        <li>O transmissor <strong>não sabe de fato</strong> se os dados chegaram ao destino</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 8. PREVISIBILIDADE -->
+<section id="previsibilidade">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(199,125,255,.15)">⏱️</div>
+    <h2 style="color:var(--accent5)">Quanto à Previsibilidade de Funcionamento</h2>
+  </div>
+
+  <div class="compare-row">
+    <div class="vs-card" style="border-color:rgba(6,214,160,.4)">
+      <h4 style="color:var(--accent3)">🟢 Rede Determinística</h4>
+      <ul>
+        <li>Entrega os pacotes de dados num intervalo de <strong>tempo previsível</strong></li>
+      </ul>
+    </div>
+    <div class="vs-card" style="border-color:rgba(199,125,255,.4)">
+      <h4 style="color:var(--accent5)">🔮 Rede Probabilística</h4>
+      <ul>
+        <li>Não se sabe antecipadamente quando o pacote chegará ao destino</li>
+        <li>Também chamada de rede <strong>estatística ou aleatória</strong></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 9. FLASHCARDS -->
+<section id="flashcards">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,209,102,.15)">⚡</div>
+    <h2 style="color:var(--accent2)">Flashcards Rápidos</h2>
+  </div>
+
+  <div class="flashcard-grid">
+    <div class="flashcard">
+      <div class="fc-q">O que é internet?</div>
+      <div class="fc-a">Rede mundial de computadores conectados que trocam informações usando protocolos. Melhor exemplo de WAN.</div>
+    </div>
+    <div class="flashcard">
+      <div class="fc-q">Internet vs Intranet</div>
+      <div class="fc-a">Internet: rede global e pública. Intranet: rede privada de organizações, restrita a membros autorizados.</div>
+    </div>
+    <div class="flashcard">
+      <div class="fc-q">O que é IP?</div>
+      <div class="fc-a">Número único atribuído a cada dispositivo em uma rede. Funciona como identificador para comunicação entre dispositivos.</div>
+    </div>
+    <div class="flashcard">
+      <div class="fc-q">Como funcionam os pacotes?</div>
+      <div class="fc-a">Dados divididos em partes menores. Cada pacote tem endereço de destino e origem. Viajam por caminhos diferentes e são reunidos no destino.</div>
+    </div>
+    <div class="flashcard">
+      <div class="fc-q">Download vs Upload</div>
+      <div class="fc-a">Download: receber dados. Upload: enviar dados.</div>
+    </div>
+    <div class="flashcard">
+      <div class="fc-q">O que é Wi-Fi?</div>
+      <div class="fc-a">Tecnologia que permite conexão sem fio usando ondas de rádio.</div>
+    </div>
+    <div class="flashcard">
+      <div class="fc-q">Função do roteador em casa</div>
+      <div class="fc-a">Distribui a internet para vários dispositivos e cria a rede dentro de casa.</div>
+    </div>
+    <div class="flashcard">
+      <div class="fc-q">Hub vs Switch</div>
+      <div class="fc-a">Hub: envia dados para todos (burro). Switch: envia só para o destino correto (inteligente).</div>
+    </div>
+    <div class="flashcard">
+      <div class="fc-q">Computadores em rede significa...</div>
+      <div class="fc-a">Estão interligados de forma que podem se comunicar e trocar informações.</div>
+    </div>
+    <div class="flashcard">
+      <div class="fc-q">Rede mais comum?</div>
+      <div class="fc-a">LAN (Local Area Network) — rede local, usada em casas, escritórios e escolas.</div>
+    </div>
+  </div>
+
+  <div class="warn" style="margin-top:20px">🎯 <strong>Foco da prova:</strong> A professora costuma cobrar exatamente o que está no caderno — definições, exemplos e as diferenças entre os tipos (ex: Hub vs Switch, Orientada vs Não Orientada a Conexão, Determinística vs Probabilística).</div>
+</section>
+
+</body>
+</html>
